@@ -8,6 +8,8 @@ dependencies = [
     "ultralytics>=8.4.21",
     "torch>=2.7.0",
     "torchvision>=0.22.0",
+    "questionary>=2.1.1",
+    "rich>=14.3.3",
 ]
 
 [[tool.uv.index]]

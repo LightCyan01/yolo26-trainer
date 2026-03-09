@@ -6,6 +6,7 @@ from pathlib import Path
 from src.utils.styles import q_style
 from src.utils.models import DETECTION, INSTANCE_SEGMENTATION, OBB, CLASSIFICATION, POSE_ESTIMATION
 from src.utils.file_dialog import ask_yaml_file
+from src.utils.train_settings import TrainSettings
 
 console = Console()
 
@@ -29,6 +30,7 @@ def train_option():
 def task_menu(selected):
     dataset = None
     model = None
+    settings = TrainSettings()
     
     while(True):
         dataset_label = f"Dataset yaml path: {dataset}" if dataset else "Dataset yaml path"
@@ -38,6 +40,10 @@ def task_menu(selected):
         choices = [
             Choice(title=dataset_label, value="dataset"),
             Choice(title=model_label, value="model"),
+            Choice(
+                title="Train Settings",
+                value="train"
+            ),
             Choice(
                 title="Start Train",
                 value="start",
@@ -57,13 +63,53 @@ def task_menu(selected):
             result = model_selection(selected)
             if result:
                 model = result
+        elif choice == "train":
+            settings = settings_menu(settings)
         elif choice == "start":
-            return {
-                "model": model,
-                "data": dataset
-            }
+            settings.model = model
+            settings.data = dataset
+            return settings
             
             
+def settings_menu(settings: TrainSettings):
+    BOOL_FIELDS = {"cache", "amp", "cos_lr"}
+
+    while True:
+        choices = [
+            Choice(title=f"Epochs:        {settings.epochs}",      value="epochs"),
+            Choice(title=f"Batch:         {settings.batch}",       value="batch"),
+            Choice(title=f"Image Size:    {settings.imgsz}",       value="imgsz"),
+            Choice(title=f"Device:        {settings.device}",      value="device"),
+            Choice(title=f"Cache:         {settings.cache}",       value="cache"),
+            Choice(title=f"AMP:           {settings.amp}",         value="amp"),
+            Choice(title=f"Cosine LR:     {settings.cos_lr}",      value="cos_lr"),
+            Choice(title=f"Patience:      {settings.patience}",    value="patience"),
+            Choice(title=f"Close Mosaic:  {settings.close_mosiac}", value="close_mosiac"),
+            Choice(title="Back",                                    value="back"),
+        ]
+
+        choice = questionary.select("Train Settings", choices=choices, style=q_style).ask()
+
+        if choice is None or choice == "back":
+            return settings
+
+        if choice in BOOL_FIELDS:
+            val = questionary.confirm(
+                f"{choice}", default=getattr(settings, choice), style=q_style
+            ).ask()
+            if val is not None:
+                setattr(settings, choice, val)
+        else:
+            val = questionary.text(
+                f"{choice}",
+                default=str(getattr(settings, choice)),
+                validate=lambda v: v.isdigit() or "Enter a valid integer",
+                style=q_style
+            ).ask()
+            if val is not None:
+                setattr(settings, choice, int(val))
+
+
 def model_selection(selected):
     if selected == "Object Detection":
         return questionary.select("Select Model", choices=DETECTION, style=q_style).ask()

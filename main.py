@@ -9,10 +9,7 @@ def main():
         result = task_menu(selected)
         
         if result:
-            run_train(
-                model=result["model"],
-                data=result["data"]
-            )
+            run_train(result)
 
 if __name__ == "__main__":
     main()

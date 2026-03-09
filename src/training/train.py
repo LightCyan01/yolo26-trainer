@@ -1,13 +1,20 @@
 import logging
-from pathlib import Path
 from ultralytics import YOLO
+from src.utils.train_settings import TrainSettings
 
 logger = logging.getLogger(__name__)
 
-def run_train(model: str, data: str) -> Path:
-    logger.info("Starting training with\nModel: %s\nData: %s", model, data)
-    
-    model = YOLO(f"models/{model}")
-    results = model.train(data=data, epochs=100)
-    save_dir = Path(results.save_dir)
-    return save_dir
+def run_train(settings: TrainSettings):
+    model = YOLO(f"models/{settings.model}")
+    model.train(
+        data=settings.data,
+        epochs=settings.epochs,
+        batch=settings.batch,
+        imgsz=settings.imgsz,
+        device=settings.device,
+        cache=settings.cache,
+        amp=settings.amp,
+        cos_lr=settings.cos_lr,
+        patience=settings.patience,
+        close_mosaic=settings.close_mosiac,
+    )

@@ -1,7 +1,11 @@
+from pathlib import Path
 from ultralytics import YOLO
+from ultralytics import settings as ultralytics_settings
 from src.utils.train_settings import TrainSettings
 
 def run_train(settings: TrainSettings):
+    ultralytics_settings.update({"datasets_dir": str(Path(settings.data).parent)})
+
     model = YOLO(f"models/{settings.model}")
 
     if settings.hyperparam.tune:
@@ -39,6 +43,7 @@ def run_train(settings: TrainSettings):
             "warmup_bias_lr":  settings.hyperparam.warmup_bias_lr,
             "box":             settings.hyperparam.box,
             "cls":             settings.hyperparam.cls,
+            "dfl":             settings.hyperparam.dfl,
             "nbs":             settings.hyperparam.nbs,
             "dropout":         settings.hyperparam.dropout,
         } if settings.hyperparam.enabled else {}),

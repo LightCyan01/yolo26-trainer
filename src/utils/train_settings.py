@@ -20,6 +20,7 @@ class HyperparamSettings:
 
 @dataclass
 class AugmentationSettings:
+    enabled: bool = False           # Enable custom augmentation settings
     hsv_h: float = 0.015            # Random hue shift (fraction of 360 degrees)
     hsv_s: float = 0.7              # Random saturation shift
     hsv_v: float = 0.4              # Random value/brightness shift
@@ -65,3 +66,4 @@ class TrainSettings:
     plots: bool = True              # Save training plots and metrics
     save_period: int = -1           # Save checkpoint every N epochs (-1 to disable)
     hyperparam: HyperparamSettings = field(default_factory=HyperparamSettings)
+    augmentation: AugmentationSettings = field(default_factory=AugmentationSettings)

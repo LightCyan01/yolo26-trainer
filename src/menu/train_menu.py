@@ -1,6 +1,6 @@
 import questionary
 from questionary import Choice
-from src.utils.train_settings import TrainSettings, HyperparamSettings
+from src.utils.train_settings import TrainSettings, HyperparamSettings, AugmentationSettings
 from src.utils.styles import q_style
 from src.utils.models import DETECTION, INSTANCE_SEGMENTATION, OBB, CLASSIFICATION, POSE_ESTIMATION
 from src.utils.file_dialog import ask_yaml_file
@@ -22,6 +22,7 @@ def train_menu(selected):
             Choice(title=model_label,   value="model"),
             Choice(title="Train Settings",          value="train"),
             Choice(title="Hyperparameter Settings", value="hyperparam"),
+            Choice(title="Augmentation Settings",   value="augment"),
             Choice(
                 title="Start Train",
                 value="start",
@@ -45,6 +46,8 @@ def train_menu(selected):
             settings = settings_menu(settings)
         elif choice == "hyperparam":
             settings.hyperparam = hyperparam_menu(settings.hyperparam)
+        elif choice == "augment":
+            settings.augmentation = augment_menu(settings.augmentation)
         elif choice == "start":
             settings.model = model
             settings.data = dataset
@@ -186,3 +189,75 @@ def hyperparam_menu(hp: HyperparamSettings):
             ).ask()
             if val is not None:
                 setattr(hp, choice, int(val))
+
+
+def augment_menu(aug: AugmentationSettings) -> AugmentationSettings:
+    FLOAT_FIELDS = {"hsv_h", "hsv_s", "hsv_v", "degrees", "translate", "scale",
+                    "shear", "perspective", "flipud", "fliplr", "bgr", "mosaic",
+                    "mixup", "cutmix", "copy_paste", "erasing"}
+
+    while True:
+        enabled_label = f"[{'x' if aug.enabled else ' '}] Enable Custom Augmentation"
+        choices = [
+            Choice(title=enabled_label,                                         value="enabled"),
+            Choice(title=f"HSV Hue:          {aug.hsv_h}",                      value="hsv_h"),
+            Choice(title=f"HSV Saturation:   {aug.hsv_s}",                      value="hsv_s"),
+            Choice(title=f"HSV Value:        {aug.hsv_v}",                      value="hsv_v"),
+            Choice(title=f"Degrees:          {aug.degrees}",                    value="degrees"),
+            Choice(title=f"Translate:        {aug.translate}",                  value="translate"),
+            Choice(title=f"Scale:            {aug.scale}",                      value="scale"),
+            Choice(title=f"Shear:            {aug.shear}",                      value="shear"),
+            Choice(title=f"Perspective:      {aug.perspective}",                value="perspective"),
+            Choice(title=f"Flip Up/Down:     {aug.flipud}",                     value="flipud"),
+            Choice(title=f"Flip Left/Right:  {aug.fliplr}",                     value="fliplr"),
+            Choice(title=f"BGR Swap:         {aug.bgr}",                        value="bgr"),
+            Choice(title=f"Mosaic:           {aug.mosaic}",                     value="mosaic"),
+            Choice(title=f"Mixup:            {aug.mixup}",                      value="mixup"),
+            Choice(title=f"Cutmix:           {aug.cutmix}",                     value="cutmix"),
+            Choice(title=f"Copy Paste:       {aug.copy_paste}",                 value="copy_paste"),
+            Choice(title=f"Copy Paste Mode:  {aug.copy_paste_mode}",            value="copy_paste_mode"),
+            Choice(title=f"Auto Augment:     {aug.auto_augment}",               value="auto_augment"),
+            Choice(title=f"Erasing:          {aug.erasing}",                    value="erasing"),
+            Choice(title=f"Close Mosaic:     {aug.close_mosaic}",               value="close_mosaic"),
+            Choice(title="Back",                                                 value="back"),
+        ]
+
+        choice = questionary.select("Augmentation Settings", choices=choices, style=q_style).ask()
+
+        if choice is None or choice == "back":
+            return aug
+
+        if choice == "enabled":
+            aug.enabled = not aug.enabled
+        elif choice == "copy_paste_mode":
+            val = questionary.select(
+                "copy_paste_mode", choices=["flip", "mixup"], style=q_style
+            ).ask()
+            if val is not None:
+                aug.copy_paste_mode = val
+        elif choice == "auto_augment":
+            val = questionary.select(
+                "auto_augment",
+                choices=["randaugment", "autoaugment", "augmix", "none"],
+                style=q_style
+            ).ask()
+            if val is not None:
+                aug.auto_augment = val
+        elif choice == "close_mosaic":
+            val = questionary.text(
+                "close_mosaic",
+                default=str(aug.close_mosaic),
+                validate=validate_int,
+                style=q_style
+            ).ask()
+            if val is not None:
+                aug.close_mosaic = int(val)
+        elif choice in FLOAT_FIELDS:
+            val = questionary.text(
+                f"{choice}",
+                default=str(getattr(aug, choice)),
+                validate=validate_float,
+                style=q_style
+            ).ask()
+            if val is not None:
+                setattr(aug, choice, float(val))

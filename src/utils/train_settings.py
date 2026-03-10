@@ -14,6 +14,7 @@ class HyperparamSettings:
     warmup_bias_lr: float = 0.1     # Initial bias learning rate during warmup
     box: float = 7.5                # Weight of the box regression loss
     cls: float = 0.5                # Weight of the classification loss
+    dfl: float = 1.5                # Weight of the distribution focal loss
     nbs: int = 64                   # Nominal batch size for loss normalization
     dropout: float = 0.0            # Dropout rate for classification head
 

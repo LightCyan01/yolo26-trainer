@@ -135,7 +135,7 @@ def settings_menu(settings: TrainSettings):
 
 def hyperparam_menu(hp: HyperparamSettings):
     FLOAT_FIELDS = {"lr0", "lrf", "momentum", "weight_decay", "warmup_epochs",
-                    "warmup_momentum", "warmup_bias_lr", "box", "cls", "dropout"}
+                    "warmup_momentum", "warmup_bias_lr", "box", "cls", "dfl", "dropout"}
 
     while True:
         enabled_label = f"[{'x' if hp.enabled else ' '}] Manual Hyperparameters"
@@ -153,6 +153,7 @@ def hyperparam_menu(hp: HyperparamSettings):
             Choice(title=f"Warmup Bias LR:   {hp.warmup_bias_lr}",         value="warmup_bias_lr"),
             Choice(title=f"Box:              {hp.box}",                    value="box"),
             Choice(title=f"CLS:              {hp.cls}",                    value="cls"),
+            Choice(title=f"DFL:              {hp.dfl}",                    value="dfl"),
             Choice(title=f"NBS:              {hp.nbs}",                    value="nbs"),
             Choice(title=f"Dropout:          {hp.dropout}",                value="dropout"),
             Choice(title="Back",                                            value="back"),

@@ -17,7 +17,7 @@ def main_menu():
     else:
         print(f"Using CPU\n")
     
-    return questionary.select("Main Menu", choices = ["Train", "Validate", "Predict"], style=q_style).ask()
+    return questionary.select("Main Menu", choices = ["Train", "Validate", "Predict", "Exit"], style=q_style).ask()
 
 def train_option():
     return questionary.select("Select Training Task", choices = ["Object Detection", "Instance Segmentation",
@@ -28,6 +28,11 @@ def val_option():
     return questionary.select("Select Validation Task", choices = ["Object Detection", "Instance Segmentation",
                                                                    "Image Classification", "Pose Estimation",
                                                                    "Oriented Bounding Boxes Object Detection"], style=q_style).ask()
+
+def predict_option():
+    return questionary.select("Select Prediction Task", choices = ["Object Detection", "Instance Segmentation",
+                                                                    "Image Classification", "Pose Estimation",
+                                                                    "Oriented Bounding Boxes Object Detection"], style=q_style).ask()
     
 
 

@@ -3,6 +3,11 @@ from src.utils.train_settings import TrainSettings
 
 def run_train(settings: TrainSettings):
     model = YOLO(f"models/{settings.model}")
+
+    if settings.hyperparam.tune:
+        model.tune(data=settings.data)
+        return
+
     model.train(
         data=settings.data,
         epochs=settings.epochs,

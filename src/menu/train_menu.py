@@ -135,30 +135,39 @@ def hyperparam_menu(hp: HyperparamSettings):
                     "warmup_momentum", "warmup_bias_lr", "box", "cls", "dropout"}
 
     while True:
-        enabled_label = f"[{'x' if hp.enabled else ' '}] Enable Custom Hyperparameters"
+        enabled_label = f"[{'x' if hp.enabled else ' '}] Manual Hyperparameters"
+        tune_label    = f"[{'x' if hp.tune else ' '}] Auto-Tune (model.tune())"
         choices = [
-            Choice(title=enabled_label,                              value="enabled"),
-            Choice(title=f"LR0:              {hp.lr0}",              value="lr0"),
-            Choice(title=f"LRF:              {hp.lrf}",              value="lrf"),
-            Choice(title=f"Momentum:         {hp.momentum}",         value="momentum"),
-            Choice(title=f"Weight Decay:     {hp.weight_decay}",     value="weight_decay"),
-            Choice(title=f"Warmup Epochs:    {hp.warmup_epochs}",    value="warmup_epochs"),
-            Choice(title=f"Warmup Momentum:  {hp.warmup_momentum}",  value="warmup_momentum"),
-            Choice(title=f"Warmup Bias LR:   {hp.warmup_bias_lr}",   value="warmup_bias_lr"),
-            Choice(title=f"Box:              {hp.box}",              value="box"),
-            Choice(title=f"CLS:              {hp.cls}",              value="cls"),
-            Choice(title=f"NBS:              {hp.nbs}",              value="nbs"),
-            Choice(title=f"Dropout:          {hp.dropout}",          value="dropout"),
-            Choice(title="Back",                                      value="back"),
+            Choice(title=enabled_label,                                    value="enabled"),
+            Choice(title=tune_label,                                       value="tune"),
+            Choice(title=f"--- Manual Settings ---",                       value="_divider1", disabled=" "),
+            Choice(title=f"LR0:              {hp.lr0}",                    value="lr0"),
+            Choice(title=f"LRF:              {hp.lrf}",                    value="lrf"),
+            Choice(title=f"Momentum:         {hp.momentum}",               value="momentum"),
+            Choice(title=f"Weight Decay:     {hp.weight_decay}",           value="weight_decay"),
+            Choice(title=f"Warmup Epochs:    {hp.warmup_epochs}",          value="warmup_epochs"),
+            Choice(title=f"Warmup Momentum:  {hp.warmup_momentum}",        value="warmup_momentum"),
+            Choice(title=f"Warmup Bias LR:   {hp.warmup_bias_lr}",         value="warmup_bias_lr"),
+            Choice(title=f"Box:              {hp.box}",                    value="box"),
+            Choice(title=f"CLS:              {hp.cls}",                    value="cls"),
+            Choice(title=f"NBS:              {hp.nbs}",                    value="nbs"),
+            Choice(title=f"Dropout:          {hp.dropout}",                value="dropout"),
+            Choice(title="Back",                                            value="back"),
         ]
 
         choice = questionary.select("Hyperparameter Settings", choices=choices, style=q_style).ask()
 
-        if choice is None or choice == "back":
+        if choice is None or choice == "back" or choice.startswith("_"):
             return hp
 
         if choice == "enabled":
             hp.enabled = not hp.enabled
+            if hp.enabled:
+                hp.tune = False
+        elif choice == "tune":
+            hp.tune = not hp.tune
+            if hp.tune:
+                hp.enabled = False
         elif choice in FLOAT_FIELDS:
             val = questionary.text(
                 f"{choice}",

@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 @dataclass
 class HyperparamSettings:
     enabled: bool = False           # Enable custom hyperparameters for training
+    tune: bool = False              # Use automatic hyperparameter tuning (model.tune())
     lr0: float = 0.01               # Initial learning rate
     lrf: float = 0.01               # Final learning rate as a fraction of lr0
     momentum: float = 0.937         # SGD momentum / Adam beta1

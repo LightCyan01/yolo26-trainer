@@ -4,7 +4,7 @@ from src.utils.val_settings import ValSettings
 
 
 def run_val(settings: ValSettings, model: str):
-    model_path = model if os.path.isabs(model) else f"models/{model}"
+    model_path = (f"models/{model}")
     m = YOLO(model_path)
 
     if not settings.use_custom_settings:
@@ -22,13 +22,13 @@ def run_val(settings: ValSettings, model: str):
         iou=settings.iou,
         max_det=settings.max_det,
         half=settings.half,
-        device=settings.device or None,
+        device=settings.device,
         dnn=settings.dnn,
         plots=settings.plots,
         workers=settings.workers,
         verbose=settings.verbose,
-        project=settings.project or None,
-        name=settings.name or None,
+        project=settings.project,
+        name=settings.name,
         rect=settings.rect,
         split=settings.split,
         augment=settings.augment,

@@ -65,7 +65,6 @@ def val_model_selection(selected):
     if source == "custom":
         return ask_model_file()
 
-    # Official model — pick from task list
     if selected == "Object Detection":
         return questionary.select("Select Model", choices=DETECTION, style=q_style).ask()
     elif selected == "Instance Segmentation":

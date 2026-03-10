@@ -22,3 +22,14 @@ def ask_model_file() -> str | None:
     )
     root.destroy()
     return path or None
+
+def ask_video_file() -> str | None:
+    root = tk.Tk()
+    root.withdraw()
+    root.attributes("-topmost", True)
+    path = filedialog.askopenfilename(
+        title="Select Video File",
+        filetypes=[("Video files", "*.mp4 *.avi *.mov *.mkv *.webm"), ("All files", "*.*")]
+    )
+    root.destroy()
+    return path or None

@@ -1,11 +1,12 @@
 # YOLO26 Fine-Tuner
 
-A terminal-based interactive tool for fine-tuning YOLO26 models on custom datasets. Navigate training, validation, and hyperparameter configuration entirely through keyboard-driven menus — no config files needed.
+A terminal-based interactive tool for fine-tuning and running inference with YOLO26 models on custom datasets. Navigate training, validation, prediction, and hyperparameter configuration entirely through keyboard-driven menus — no config files needed.
 
 ## Features
 
 - **Train** — configure epochs, batch size, optimizer, LR scheduler, and more through interactive menus
 - **Validate** — run validation with a custom trained or official model; all settings optional (model remembers training config)
+- **Predict** — run inference on a webcam or video file
 - **Hyperparameter tuning** — manual overrides or automatic tuning via `model.tune()`
 - **Augmentation settings** — full control over mosaic, mixup, flips, HSV shifts, and more
 - **Dataset support** — any dataset with a YOLO-format `.yaml` file; point the menu at it and go
@@ -24,7 +25,7 @@ cd yolo26-trainer
 uv sync
 ```
 
-Official model weights (e.g. `yolo26n.pt`) are downloaded automatically by Ultralytics on first use.
+Official model weights (YOLO26) are downloaded automatically by Ultralytics on first use.
 
 ## Usage
 
@@ -36,13 +37,14 @@ Use arrow keys to navigate, Enter to select. The main menu offers:
 
 - **Train** — select task type → pick an official model → set dataset YAML → configure settings → start
 - **Validate** — select task type → pick official or custom trained model → optionally override val settings → start
+- **Predict** — select task type → pick official or custom trained model → select webcam or video file → optionally override predict settings → start
 
 ## Project Structure
 
 ```
 src/
-  menu/         # Interactive menus (train, val)
-  training/     # run_train(), run_val() wrappers
+  menu/         # Interactive menus (train, val, predict)
+  training/     # run_train(), run_val(), run_predict() wrappers
   utils/        # Settings dataclasses, validators, file dialogs, model lists
 dataset/
   NEU-DET-YOLO/ # Example: NEU surface defect dataset (YOLO format)
